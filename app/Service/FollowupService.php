@@ -64,4 +64,15 @@ class FollowupService
             'due_at' => $data["due_at"]
         ]);
     }
+
+    public function index(array $data)
+    {
+        if (!isset($data['page']) && !isset($data['per_page'])) {
+            return $this->followupModel->getAll();
+        }
+
+        $page = max(1,(int)$data['page'] ?? 1);
+        $perPage = max(1,(int)$data['per_page'] ?? 10);
+        return $this->followupModel->index($page,$perPage);
+    }
 }

@@ -25,4 +25,28 @@ final class FollowupModel
 
         return $this->db->lastInsertId();
     }
+
+    public function index(int $page, int $perPage)
+    {
+        $offset = ($page - 1) * $perPage;
+        $query = "SELECT * FROM followups ORDER BY id DESC LIMIT :limit OFFSET :offsetPage";
+
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offsetPage', $offset, PDO::PARAM_INT);
+
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function getAll()
+    {
+        $query = "SELECT * FROM followups";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
 }

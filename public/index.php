@@ -38,6 +38,7 @@ $router->get('/', static function () use ($twig): Response {
 });
 
 $router->post('/api/followups',array($followUpController, 'create'));
+$router->get('/api/followups',array($followUpController, 'index'));
 
 $router->get('/health', new HealthController());
 $router->get('/api/customers', array($customerController, 'index'));

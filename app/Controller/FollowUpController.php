@@ -28,4 +28,20 @@ class FollowUpController
             'id' => $followUpId
         ],201);
     }
+
+    public function index(Request $request): Response
+    {
+        $data = [
+            'page' => $request->query('page'),
+            'per_page' => $request->query('per_page'),
+        ];
+
+        return Response::json([
+            'message' => 'Show Successfully',
+            'page' => $data['page'],
+            'per_page' => $data['per_page'],
+            'data' => $this->followupService->index($data),
+            'status' => 'success',
+        ], 200);
+    }
 }
