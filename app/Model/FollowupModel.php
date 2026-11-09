@@ -49,4 +49,14 @@ final class FollowupModel
 
         return $statement->fetchAll();
     }
+
+    public function show(int $id)
+    {
+        $query = "SELECT * FROM followups WHERE id = :id";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute([$id]);
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

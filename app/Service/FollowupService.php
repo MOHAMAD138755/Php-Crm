@@ -75,4 +75,9 @@ class FollowupService
         $perPage = max(1,(int)$data['per_page'] ?? 10);
         return $this->followupModel->index($page,$perPage);
     }
+
+    public function show(int $id)
+    {
+        return $this->followupModel->show($id);
+    }
 }

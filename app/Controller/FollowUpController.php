@@ -44,4 +44,14 @@ class FollowUpController
             'status' => 'success',
         ], 200);
     }
+
+    public function show(Request $request,$params){
+        $id = (int) $params['id'];
+
+        return Response::json([
+            'message' => 'Show Successfully',
+            'data' => [$this->followupService->show($id)],
+            'status' => 'success',
+        ],200);
+    }
 }
