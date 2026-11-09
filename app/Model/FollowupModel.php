@@ -86,4 +86,14 @@ final class FollowupModel
         }
         return false;
     }
+
+    public function completed(int $id)
+    {
+        $query = "UPDATE followups SET status = 'completed', completed_at = NOW(),updated_at = NOW() WHERE id = :id";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute(['id' => $id]);
+
+        return $this->findById($id);
+    }
 }

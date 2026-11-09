@@ -41,6 +41,7 @@ $router->post('/api/followups',array($followUpController, 'create'));
 $router->get('/api/followups',array($followUpController, 'index'));
 $router->get('/api/followups/{id}',array($followUpController, 'show'));
 $router->put('/api/followups/{id}',array($followUpController, 'update'));
+$router->post('/api/followups/{id}/complete',array($followUpController, 'complete'));
 
 $router->get('/health', new HealthController());
 $router->get('/api/customers', array($customerController, 'index'));
