@@ -1,16 +1,73 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <p class="eyebrow">Hiring exercise</p>
-    <h1>Customer Follow-up Assessment</h1>
-    <p>The starter is running. Read <code>README.md</code> and <code>ASSIGNMENT.md</code> before implementing the feature.</p>
-    <div class="card">
-        <strong>Health check</strong>
-        <code>GET /health</code>
-    </div>
-    <div class="card">
-        <strong>Visible customers</strong>
-        <code>GET /api/customers</code> with header <code>X-User-Id: 1</code>
-    </div>
-{% endblock %}
 
+    <div class="container">
+        <h1 style="text-align: center;">FollowUp Management</h1>
+
+        <p>Manage your customer follow-ups</p>
+
+        <h2>Follow-ups</h2>
+
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer ID</th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Creator ID</th>
+            </tr>
+            </thead>
+
+            <tbody id="followups">
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        let tableBody = document.getElementById('followups')
+
+        const followUps = async () => {
+            tableBody.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>"
+            const response = await fetch('/api/followups')
+
+            const data = await response.json()
+
+            if (!response.ok){
+                throw new Error(data.error)
+            }
+
+            tableBody.innerHTML = ''
+
+            if (data.data.length === 0){
+                tableBody.innerHTML = '<td colspan="7">Not Data</td>'
+                return
+            }
+
+            data.data.forEach(item => {
+                let tr = document.createElement('tr')
+                const values = [
+                    item.id,
+                    item.customer_id,
+                    item.title,
+                    item.priority,
+                    item.status,
+                    item.due_at,
+                    item.creator_id
+                ];
+
+                values.forEach(value => {
+                    const td = document.createElement('td')
+                    td.innerHTML = value
+                    tr.appendChild(td)
+                })
+                tableBody.appendChild(tr)
+            })
+        }
+
+        followUps()
+    </script>
+
+{% endblock %}
