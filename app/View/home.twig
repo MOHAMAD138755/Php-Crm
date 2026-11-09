@@ -9,6 +9,7 @@
 
         <h2>Follow-ups</h2>
 
+        <button id="openModal" type="button">New Follow-up</button>
         <table border="1" cellpadding="10" cellspacing="0">
             <thead>
             <tr>
@@ -25,6 +26,53 @@
             <tbody id="followups">
             </tbody>
         </table>
+    </div>
+    <div id="createModal" class="modal">
+    <form id="createForm">
+
+        <div class="form-group">
+            <label for="customer_id">Customer ID</label>
+            <input type="number" id="customer_id"
+                   name="customer_id" placeholder="Enter customer ID" required>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title"
+                   name="title" maxlength="150" placeholder="Enter follow-up title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Write description..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="due_at">Due Date</label>
+            <input type="datetime-local" id="due_at"
+                   name="due_at" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" id="cancelModal" class="cancel-btn">
+                Cancel
+            </button>
+
+            <button type="submit" class="submit-btn">
+                Create Follow-up
+            </button>
+        </div>
+
+    </form>
     </div>
     <script type="text/javascript">
         let tableBody = document.getElementById('followups')
@@ -55,7 +103,7 @@
                     item.priority,
                     item.status,
                     item.due_at,
-                    item.creator_id
+                    item.creator_id,
                 ];
 
                 values.forEach(value => {
@@ -68,6 +116,56 @@
         }
 
         followUps()
+
+        const createForm = document.getElementById('createForm');
+        const modal = document.getElementById('createModal');
+        const openModal = document.getElementById('openModal');
+        const cancelModal = document.getElementById('cancelModal');
+
+        openModal.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        cancelModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        createForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(createForm);
+
+            const data = {
+                customer_id: Number(formData.get('customer_id')),
+                title: formData.get('title'),
+                description: formData.get('description'),
+                priority: formData.get('priority'),
+                due_at: formData.get('due_at').replace('T', ' ') + ':00'
+            };
+
+                const response = await fetch('/api/followups', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-Id': '2'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert(result.error)
+                    throw new Error(result.error || 'Failed to create follow-up');
+                }
+
+                alert('Follow-up created successfully!');
+
+                createForm.reset();
+                modal.style.display = 'none';
+
+                await followUps();
+        });
     </script>
 
 {% endblock %}

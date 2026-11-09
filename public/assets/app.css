@@ -12,3 +12,142 @@ h1 { font-size: clamp(2rem, 6vw, 4rem); line-height: 1; }
 .card { background: #fff; border: 1px solid #dce3ee; border-radius: 12px; padding: 18px; margin-top: 16px; display: grid; gap: 8px; }
 code { color: #3140c8; }
 
+#openModal{
+    width: 200px;
+    height: 35px;
+    text-align: center;
+    color: white;
+    border-radius: 7px;
+    background-color: blue;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: .3s all;
+}
+
+#openModal:hover{
+    background-color: #3140c8;
+}
+
+#createModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+#createModal form {
+    display: block;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close {
+    position: absolute;
+    top: 13px;
+    right: 18px;
+    border: none;
+    background: none;
+    font-size: 28px;
+    color: #777;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 14px;
+    outline: none;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.form-actions button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cancel-btn {
+    background: #eee;
+    color: #333;
+}
+
+.submit-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.submit-btn:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-content {
+        padding: 23px 17px;
+        max-height: 95vh;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions button {
+        width: 100%;
+        padding: 13px;
+    }
+}
