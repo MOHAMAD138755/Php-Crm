@@ -78,4 +78,16 @@ class FollowUpController
             'status' => 'success'
         ]);
     }
+
+    public function reopen(Request $request,$params)
+    {
+        $user = $this->auth->user($request);
+        $id = (int) $params['id'];
+
+        return Response::json([
+            'message' => 'Updated Reopen Successfully',
+            'data' => [$this->followupService->reopen($id,$user)],
+            'status' => 'success'
+        ]);
+    }
 }

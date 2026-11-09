@@ -96,4 +96,14 @@ final class FollowupModel
 
         return $this->findById($id);
     }
+
+    public function reopen(int $id)
+    {
+        $query = "UPDATE followups SET status = 'open',updated_at = NOW(),completed_at = null WHERE id = :id";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute(['id' => $id]);
+
+        return $this->findById($id);
+    }
 }

@@ -140,4 +140,23 @@ class FollowupService
 
         return $this->followupModel->findById($id);
     }
+
+    public function reopen(int $id,$user)
+    {
+        $followUpId = $this->followupModel->findById($id);
+        if (!$followUpId) {
+            throw new HttpException(404, 'Followup Not Found');
+        }
+
+        if (!$this->customerModel->isVisibleTo((int)$followUpId['customer_id'],$user)){
+            throw new HttpException(404,"Customer Id Not Found");
+        }
+
+        if ($followUpId['status'] === 'open') {
+            throw new HttpException(422, 'Followup Has Open');
+        }
+
+        $this->followupModel->reopen($id);
+        return $this->followupModel->findById($id);
+    }
 }
