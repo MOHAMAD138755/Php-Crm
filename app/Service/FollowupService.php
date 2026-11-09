@@ -80,4 +80,43 @@ class FollowupService
     {
         return $this->followupModel->show($id);
     }
+
+    public function update(int $id,array $data,$user)
+    {
+        $followUpId = $this->followupModel->findById($id);
+        if (!$followUpId){
+            throw new HttpException(422,"Followup Id Not Found");
+        }
+
+        if (!$this->customerModel->isVisibleTo((int)$followUpId['customer_id'],$user)){
+            throw new HttpException(404,"Customer Id Not Found");
+        }
+
+        if (array_key_exists('customer_id', $data)) {
+            throw new HttpException(422, 'Customer ID cannot be changed');
+        }
+
+        if ($followUpId['status'] !== 'open'){
+            throw new HttpException(422,"Followup Status Not Open");
+        }
+
+        if (strlen($data['title']) > 150) {
+            throw new HttpException(422,"Title must be less than 150 characters");
+        }
+
+        if (!is_string($data['title']) || !is_string($data['description']) || !is_string($data['priority'])) {
+            throw new HttpException(422,"Field 'title' or 'description' or 'priority' must be a string");
+        }
+
+        if ($data["priority"] !== 'low' && $data["priority"] !== 'high' && $data["priority"] !== 'normal') {
+            throw new HttpException(422,"Field 'priority' or 'normal' must be a string");
+        }
+
+        $checkDateTime = DateTime::createFromFormat("Y-m-d H:i:s", $data["due_at"]);
+        if (!$checkDateTime) {
+            throw new HttpException(422,"Field 'due_at' must be a valid date");
+        }
+
+        return $this->followupModel->update($id,$data);
+    }
 }

@@ -54,4 +54,16 @@ class FollowUpController
             'status' => 'success',
         ],200);
     }
+
+    public function update(Request $request,$params)
+    {
+        $user = $this->auth->user($request);
+        $followUpId = (int) $params['id'];
+
+        return Response::json([
+            'message' => 'Updated Successfully',
+            'data' => [$this->followupService->update($followUpId,$request->body(),$user)],
+            'status' => 'success'
+        ],200);
+    }
 }

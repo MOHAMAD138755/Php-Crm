@@ -59,4 +59,31 @@ final class FollowupModel
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function update(int $id, array $data){
+        $query = "UPDATE followups SET title = :title, description = :description,
+                     priority = :priority, due_at = :due_at,updated_at = NOW() WHERE id = :id";
+
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':title', $data['title'], PDO::PARAM_STR);
+        $statement->bindValue(':description', $data['description'], PDO::PARAM_STR);
+        $statement->bindValue(':priority', $data['priority'], PDO::PARAM_STR);
+        $statement->bindValue(':due_at', $data['due_at'], PDO::PARAM_STR);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+
+        $statement->execute();
+        return $this->findById($id);
+    }
+
+    public function findById(int $id)
+    {
+        $query = "SELECT * FROM followups WHERE id = :id";
+        $statement = $this->db->prepare($query);
+        $statement->execute(['id' => $id]);
+
+        if ($statement->rowCount() > 0) {
+            return $statement->fetch(PDO::FETCH_ASSOC);
+        }
+        return false;
+    }
 }
