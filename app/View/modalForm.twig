@@ -1,0 +1,47 @@
+<div id="createModal" class="modal">
+    <form id="createForm">
+
+        <div class="form-group">
+            <label for="customer_id">Customer ID</label>
+            <input type="number" id="customer_id"
+                   name="customer_id" placeholder="Enter customer ID" required>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title"
+                   name="title" maxlength="150" placeholder="Enter follow-up title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Write description..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="due_at">Due Date</label>
+            <input type="datetime-local" id="due_at"
+                   name="due_at" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" id="cancelModal" class="cancel-btn">
+                Cancel
+            </button>
+
+            <button type="submit" class="submit-btn">
+                Create Follow-up
+            </button>
+        </div>
+
+    </form>
+</div>
