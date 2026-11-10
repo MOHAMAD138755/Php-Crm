@@ -20,6 +20,7 @@
                 <th>Status</th>
                 <th>Due Date</th>
                 <th>Creator ID</th>
+                <th>Reopen</th>
                 <th>Complete</th>
             </tr>
             </thead>
@@ -143,6 +144,39 @@
                     alert('Follow-up Complete successfully!');
                     await followUps();
                 });
+
+                const ReopenTd = document.createElement('td');
+                const ReopenBtn = document.createElement('button');
+                ReopenBtn.style.backgroundColor = 'red'
+                ReopenBtn.style.color = 'white'
+                ReopenBtn.style.border = 'none'
+                ReopenBtn.style.borderRadius = '2px'
+                ReopenBtn.textContent = 'Reopen';
+
+                ReopenBtn.addEventListener('click', async () => {
+                    if (!confirm('Are you sure you want to complete this follow-up?')) {
+                        return;
+                    }
+
+                    const response =  await fetch(`/api/followups/${item.id}/reopen`,{
+                        method:'POST',
+                        headers:{
+                            'X-User-Id': '2'
+                        }
+                    })
+                    const data = await response.json()
+
+                    if (!response.ok){
+                        throw new Error(data.error)
+                    }
+
+                    alert('Follow-up Reopen successfully!')
+                    await followUps()
+                })
+
+                ReopenTd.appendChild(ReopenBtn)
+                tr.appendChild(ReopenTd)
+                tableBody.appendChild(tr)
 
                 actionTd.appendChild(deleteBtn);
                 tr.appendChild(actionTd);
