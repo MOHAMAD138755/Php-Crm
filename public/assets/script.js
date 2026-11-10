@@ -1,8 +1,18 @@
 let tableBody = document.getElementById('followups')
 
-const followUps = async () => {
+const followUps = async (priority = '') => {
     tableBody.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>"
-    const response = await fetch('/api/followups')
+
+    const params = new URLSearchParams()
+    if (priority) {
+        params.set('priority', priority)
+    }
+
+    const url = params.toString() ? `/api/followups?${params.toString()}` : '/api/followups';
+    const response = await fetch(url, {
+        headers:
+            {'X-User-Id': '2'}
+    });
 
     const data = await response.json()
 
@@ -155,3 +165,12 @@ createForm.addEventListener('submit', async (event) => {
 
     await followUps();
 });
+
+const priorityFilter = document.getElementById('priorityFilter')
+document.getElementById('filterBtn').addEventListener('click', () => {
+    followUps(priorityFilter.value)
+})
+document.getElementById('resetBtn').addEventListener('click', () => {
+    priorityFilter.value = '';
+    followUps()
+})

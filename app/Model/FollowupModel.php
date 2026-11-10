@@ -26,12 +26,23 @@ final class FollowupModel
         return $this->db->lastInsertId();
     }
 
-    public function index(int $page, int $perPage)
+    public function index(int $page, int $perPage,array $filters = [])
     {
         $offset = ($page - 1) * $perPage;
-        $query = "SELECT * FROM followups ORDER BY id DESC LIMIT :limit OFFSET :offsetPage";
+        $query = "SELECT * FROM followups WHERE 1=1";
+        $params = [];
+
+        if (!empty($filters)){
+            $query .= " AND priority = :priority";
+            $params['priority'] = $filters['priority'];
+        }
+
+        $query .= " ORDER BY id DESC LIMIT :limit OFFSET :offsetPage";
 
         $statement = $this->db->prepare($query);
+        foreach ($params as $key => $value){
+            $statement->bindValue(':' . $key, $value, PDO::PARAM_STR);
+        }
         $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $statement->bindValue(':offsetPage', $offset, PDO::PARAM_INT);
 
