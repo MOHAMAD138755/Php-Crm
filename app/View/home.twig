@@ -10,7 +10,8 @@
         <h2>Follow-ups</h2>
 
         <button id="openModal" type="button">New Follow-up</button>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <div class="table-responsive">
+        <table  class="followup-table" border="1" cellpadding="10" cellspacing="0">
             <thead>
             <tr>
                 <th>ID</th>
@@ -28,6 +29,7 @@
             <tbody id="followups">
             </tbody>
         </table>
+        </div>
     </div>
     <div id="createModal" class="modal">
     <form id="createForm">
@@ -176,7 +178,6 @@
 
                 ReopenTd.appendChild(ReopenBtn)
                 tr.appendChild(ReopenTd)
-                tableBody.appendChild(tr)
 
                 actionTd.appendChild(deleteBtn);
                 tr.appendChild(actionTd);
