@@ -6,7 +6,7 @@ namespace Assessment\Model;
 
 use PDO;
 
-final class CustomerModel
+class CustomerModel
 {
     private PDO $db;
 

@@ -5,7 +5,7 @@ namespace Assessment\Model;
 
 use PDO;
 
-final class FollowupModel
+class FollowupModel
 {
     public PDO $db;
 
