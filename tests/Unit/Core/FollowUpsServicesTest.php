@@ -296,4 +296,112 @@ class FollowUpsServicesTest extends TestCase
 
         $this->followupService->complete($followUpId,$user);
     }
+
+    public function test_FollowUps_Services_Reopen_Successfully(): void
+    {
+        $followUpId = 5;
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+        $oldData = [
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'completed'
+
+        ];
+        $newData = [
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'open'
+        ];
+
+        $this->customerModel->expects($this->once())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(true);
+
+        $this->followUpModel->expects($this->exactly(2))->method('findById')->with($followUpId)
+            ->willReturnOnConsecutiveCalls($oldData,$newData);
+        $this->followUpModel->expects($this->once())->method('reopen')->with($followUpId);
+
+        $result = $this->followupService->reopen($followUpId,$user);
+
+        $this->assertEquals($result,$newData);
+    }
+    public function test_FollowUps_Services_Reopen_Failure_Not_Found_Customer(): void
+    {
+        $followUpId = 5;
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+        $data = [
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'completed'
+
+        ];
+
+        $this->customerModel->expects($this->once())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(false);
+
+        $this->followUpModel->expects($this->once())->method('findById')->with($followUpId)
+            ->willReturn($data);
+        $this->followUpModel->expects($this->never())->method('reopen')->with($followUpId);
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Customer Id Not Found');
+
+        $this->followupService->reopen($followUpId,$user);
+
+    }
+    public function test_FollowUps_Services_Reopen_Failure_Not_Complete(): void
+    {
+        $followUpId = 5;
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+        $data = [
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'open'
+        ];
+
+        $this->customerModel->expects($this->once())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(true);
+
+        $this->followUpModel->expects($this->once())->method('findById')->with($followUpId)
+            ->willReturn($data);
+        $this->followUpModel->expects($this->never())->method('reopen')->with($followUpId);
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Followup Has Open');
+
+        $this->followupService->reopen($followUpId,$user);
+    }
+    public function test_FollowUps_Services_Reopen_Failure_Not_Found_FollowUp_Id(): void
+    {
+        $followUpId = 5;
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+        $this->followUpModel->expects($this->once())->method('findById')->with($followUpId)
+            ->willReturn(null);
+
+        $this->customerModel->expects($this->never())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(true);
+        $this->followUpModel->expects($this->never())->method('reopen')->with($followUpId);
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Followup Not Found');
+
+        $this->followupService->reopen($followUpId,$user);
+    }
+
+
 }
