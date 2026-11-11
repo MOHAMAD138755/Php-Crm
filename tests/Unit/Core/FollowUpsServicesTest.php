@@ -67,4 +67,29 @@ class FollowUpsServicesTest extends TestCase
         
         $this->followupService->create($data,$user);
     }
+
+    public function test_FollowUps_Services_Show_Successfully(): void
+    {
+        $id = 1;
+        $data = [
+            'id' => 1,
+            'customer_id' => 10,
+            'title' => 'Call customer',
+            'status' => 'open'
+        ];
+
+        $this->followUpModel->expects($this->once())->method('show')->with($id)->willReturn($data);
+        $result = $this->followupService->show($id);
+
+        $this->assertEquals($data,$result);
+    }
+    public function test_FollowUps_Services_Show_Failure(): void
+    {
+        $id = 9999;
+
+        $this->followUpModel->expects($this->once())->method('show')->with($id)->willReturn(null);
+        $result = $this->followupService->show($id);
+
+        $this->assertNull($result);
+    }
 }
