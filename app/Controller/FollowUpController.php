@@ -31,6 +31,7 @@ class FollowUpController
 
     public function index(Request $request): Response
     {
+        $user = $this->auth->user($request);
         $data = [
             'page' => $request->query('page'),
             'per_page' => $request->query('per_page'),
@@ -40,17 +41,18 @@ class FollowUpController
             'message' => 'Show Successfully',
             'page' => $data['page'],
             'per_page' => $data['per_page'],
-            'data' => $this->followupService->index($data),
+            'data' => $this->followupService->index($data,$user),
             'status' => 'success',
         ], 200);
     }
 
     public function show(Request $request,$params){
         $id = (int) $params['id'];
+        $user = $this->auth->user($request);
 
         return Response::json([
             'message' => 'Show Successfully',
-            'data' => [$this->followupService->show($id)],
+            'data' => [$this->followupService->show($id,$user)],
             'status' => 'success',
         ],200);
     }

@@ -32,7 +32,12 @@ class FollowupModel
         $query = "SELECT * FROM followups WHERE 1=1";
         $params = [];
 
-        if (!empty($filters)){
+        if (isset($filters['creator_id'])) {
+            $query .= " AND creator_id = :creator_id";
+            $params['creator_id'] = $filters['creator_id'];
+        }
+
+        if (isset($filters['priority'])) {
             $query .= " AND priority = :priority";
             $params['priority'] = $filters['priority'];
         }

@@ -65,9 +65,13 @@ class FollowupService
         ]);
     }
 
-    public function index(array $data)
+    public function index(array $data,$user)
     {
         $filters = [];
+
+        if ($user['role'] != 'admin') {
+            $filters['creator_id'] = $user['id'];
+        }
 
         $priority = $_GET['priority'] ?? null;
 
@@ -89,8 +93,17 @@ class FollowupService
         return $this->followupModel->index($page, $perPage, $filters);
     }
 
-    public function show(int $id)
+    public function show(int $id,$user)
     {
+        $followUp = $this->followupModel->findById($id);
+        if (!$followUp) {
+            throw new HttpException(404,"Follow up not found");
+        }
+
+        if ($user['role'] != 'admin' && $followUp['creator_id'] != $user['id']) {
+            throw new HttpException(403,"You don't have permission to view follow ups");
+        }
+
         return $this->followupModel->show($id);
     }
 

@@ -75,22 +75,35 @@ class FollowUpsServicesTest extends TestCase
             'id' => 1,
             'customer_id' => 10,
             'title' => 'Call customer',
-            'status' => 'open'
+            'status' => 'open',
+            'creator_id' => 2,
+        ];
+        $user = [
+            'id' => 2,
+            'role' => 'agent'
         ];
 
+        $this->followUpModel->expects($this->once())->method('findById')->with($id)->willReturn($data);
         $this->followUpModel->expects($this->once())->method('show')->with($id)->willReturn($data);
-        $result = $this->followupService->show($id);
+        $result = $this->followupService->show($id,$user);
 
         $this->assertEquals($data,$result);
     }
     public function test_FollowUps_Services_Show_Failure(): void
     {
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
         $id = 9999;
 
-        $this->followUpModel->expects($this->once())->method('show')->with($id)->willReturn(null);
-        $result = $this->followupService->show($id);
+        $this->followUpModel->expects($this->once())->method('findById')->with($id)->willReturn(null);
+        $this->followUpModel->expects($this->never())->method('show')->with($id)->willReturn(null);
 
-        $this->assertNull($result);
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Follow up not found');
+
+        $result = $this->followupService->show($id,$user);
     }
 
     public function test_FollowUps_Services_Index_Successfully(): void
@@ -99,7 +112,10 @@ class FollowUpsServicesTest extends TestCase
             'page' => 1,
             'per_page' => 3,
         ];
-
+        $user = [
+            'id' => 1,
+            'role' => 'admin'
+        ];
         $data = [
             [
                 'id' => 1,
@@ -115,7 +131,7 @@ class FollowUpsServicesTest extends TestCase
 
         $this->followUpModel->expects($this->once())->method('index')->with($pages['page'],$pages['per_page'],[])
             ->willReturn($data);
-        $result = $this->followupService->index($pages);
+        $result = $this->followupService->index($pages,$user);
 
         $this->assertEquals($data,$result);
     }
@@ -125,6 +141,10 @@ class FollowUpsServicesTest extends TestCase
             'page' => 1,
             'per_page' => 3,
         ];
+        $user = [
+            'id' => 1,
+            'role' => 'admin'
+        ];
         $_GET['priority'] = 'failure priority';
 
         $this->followUpModel->expects($this->never())->method('index');
@@ -132,7 +152,7 @@ class FollowUpsServicesTest extends TestCase
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('Priority must be low, normal or high');
 
-        $this->followupService->index($pages);
+        $this->followupService->index($pages,$user);
     }
 
     public function test_FollowUps_Services_Update_Successfully(): void
