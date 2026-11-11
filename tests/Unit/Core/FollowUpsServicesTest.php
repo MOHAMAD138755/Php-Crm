@@ -134,4 +134,63 @@ class FollowUpsServicesTest extends TestCase
 
         $this->followupService->index($pages);
     }
+
+    public function test_FollowUps_Services_Update_Successfully(): void
+    {
+        $followUpId = 5;
+        $data = ['title' => 'Call customer',
+            'description' => 'Call customer about the new offer',
+            'priority' => 'low',
+            'due_at' => '2026-11-15 10:30:00'
+        ];
+
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+        $this->customerModel->expects($this->once())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(true);
+
+        $this->followUpModel->expects($this->once())->method('findById')->with($followUpId)->willReturn([
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'open'
+        ]);
+        $this->followUpModel->expects($this->once())->method('update')->with($followUpId,$data)->willReturn($data);
+
+        $result = $this->followupService->update($followUpId,$data,$user);
+
+        $this->assertEquals($result,$data);
+    }
+    public function test_FollowUps_Services_Update_Failure(): void
+    {
+        $followUpId = 5;
+        $data = ['title' => 'Call customer',
+            'description' => 'Call customer about the new offer',
+            'priority' => 'low',
+            'due_at' => '2026-11-15 10:30:00'
+        ];
+
+        $user = [
+            'id' => 2,
+            'role' => 'agent',
+        ];
+
+
+        $this->customerModel->expects($this->once())->method('isVisibleTo')->with(10, $user)
+            ->willReturn(false);
+
+        $this->followUpModel->expects($this->once())->method('findById')->with($followUpId)->willReturn([
+            'id' => 5,
+            'customer_id' => 10,
+            'status' => 'open'
+        ]);
+        $this->followUpModel->expects($this->never())->method('update');
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Customer Id Not Found');
+
+        $this->followupService->update($followUpId,$data,$user);
+    }
 }
