@@ -64,7 +64,7 @@ class FollowUpsServicesTest extends TestCase
 
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('Customer Not Found');
-        
+
         $this->followupService->create($data,$user);
     }
 
@@ -91,5 +91,47 @@ class FollowUpsServicesTest extends TestCase
         $result = $this->followupService->show($id);
 
         $this->assertNull($result);
+    }
+
+    public function test_FollowUps_Services_Index_Successfully(): void
+    {
+        $pages = [
+            'page' => 1,
+            'per_page' => 3,
+        ];
+
+        $data = [
+            [
+                'id' => 1,
+                'title' => 'Call customer',
+                'priority' => 'high'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Send email',
+                'priority' => 'normal'
+            ]
+        ];
+
+        $this->followUpModel->expects($this->once())->method('index')->with($pages['page'],$pages['per_page'],[])
+            ->willReturn($data);
+        $result = $this->followupService->index($pages);
+
+        $this->assertEquals($data,$result);
+    }
+    public function test_FollowUps_Services_Index_Priority_Failure(): void
+    {
+        $pages = [
+            'page' => 1,
+            'per_page' => 3,
+        ];
+        $_GET['priority'] = 'failure priority';
+
+        $this->followUpModel->expects($this->never())->method('index');
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Priority must be low, normal or high');
+
+        $this->followupService->index($pages);
     }
 }
