@@ -15,11 +15,13 @@ abstract class DataBaseConnection extends TestCase
     {
         parent::setUp();
 
-        $dbHost = Config::get('TEST_DB_HOST','127.0.0.1');
-        $port = Config::get('TEST_DB_PORT','3307');
-        $dbName = Config::get('TEST_DB_DATABASE','assessment_test');
-        $userName = Config::get('TEST_DB_USERNAME','assessment');
-        $password = Config::get('TEST_DB_PASSWORD','assessment');
+        Dotenv::createUnsafeImmutable(dirname(__DIR__, 2))->load();
+
+        $dbHost = Config::get('TEST_DB_HOST');
+        $port = Config::get('TEST_DB_PORT');
+        $dbName = Config::get('TEST_DB_DATABASE');
+        $userName = Config::get('TEST_DB_USERNAME');
+        $password = Config::get('TEST_DB_PASSWORD');
 
         $dataBaseSource = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $dbHost, $port, $dbName);
 
