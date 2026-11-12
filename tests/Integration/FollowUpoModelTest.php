@@ -78,4 +78,56 @@ class FollowUpoModelTest extends DataBaseConnection
 
         $followUpModel->create($data);
     }
+
+    public function test_Index_Method_FollowUps_For_Get_List_By_Pagination()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+
+        $pages = [
+            'page' => 1,
+            'per_page' => 3,
+        ];
+
+        $followups = $followUpModel->index($pages['page'], $pages['per_page']);
+        $this->assertIsArray($followups);
+        $this->assertCount(3, $followups);
+    }
+    public function test_Index_Method_FollowUps_For_Get_List_By_Creator_Id_Filters()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+
+        $pages = [
+            'page' => 1,
+            'per_page' => 3,
+        ];
+        $filter = ['creator_id' => 1];
+
+        $followups = $followUpModel->index($pages['page'], $pages['per_page'],$filter);
+
+        foreach ($followups as $followup) {
+            $this->assertSame(1,(int)$followup['creator_id']);
+        }
+
+        $this->assertIsArray($followups);
+        $this->assertNotEmpty($followups);
+    }
+    public function test_Index_Method_FollowUps_For_Get_List_By_Priority_Filters()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+
+        $pages = [
+            'page' => 1,
+            'per_page' => 3,
+        ];
+        $filter = ['priority' => 'normal'];
+
+        $followups = $followUpModel->index($pages['page'], $pages['per_page'],$filter);
+
+        foreach ($followups as $followup) {
+            $this->assertSame('normal',$followup['priority']);
+        }
+
+        $this->assertIsArray($followups);
+        $this->assertNotEmpty($followups);
+    }
 }
