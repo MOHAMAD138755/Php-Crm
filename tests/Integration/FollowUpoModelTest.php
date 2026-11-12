@@ -203,4 +203,44 @@ class FollowUpoModelTest extends DataBaseConnection
         $followUp = $followUpModel->findById($followUpId);
         $this->assertFalse($followUp);
     }
+
+    public function test_Completed_Method_By_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 1;
+
+        $followUp = $followUpModel->completed($followUpId);
+        $this->assertNotEmpty($followUp);
+        $this->assertIsArray($followUp);
+        $this->assertSame('completed',$followUp['status']);
+        $this->assertNotNull($followUp['completed_at']);
+    }
+    public function test_Completed_Method_By_Invalid_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 9999;
+
+        $followUp = $followUpModel->completed($followUpId);
+        $this->assertFalse($followUp);
+    }
+
+    public function test_Reopen_Method_By_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 1;
+
+        $followUp = $followUpModel->reopen($followUpId);
+        $this->assertNotEmpty($followUp);
+        $this->assertIsArray($followUp);
+        $this->assertSame('open',$followUp['status']);
+        $this->assertNull($followUp['completed_at']);
+    }
+    public function test_Reopen_Method_By_Invalid_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 9999;
+
+        $followUp = $followUpModel->reopen($followUpId);
+        $this->assertFalse($followUp);
+    }
 }
