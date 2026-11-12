@@ -149,4 +149,40 @@ class FollowUpoModelTest extends DataBaseConnection
         $followUp = $followUpModel->show($followUpId);
         $this->assertEmpty($followUp);
     }
+
+    public function test_Update_a_FollowUp()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+
+        $data = [
+            'title' => 'Integration Test Followup',
+            'description' => 'Testing followup creation',
+            'priority' => 'high',
+            'due_at' => '2026-12-20 10:00:00',
+        ];
+        $followUpId = 1;
+
+        $updatedFollowUp = $followUpModel->update($followUpId, $data);
+        $this->assertIsArray($updatedFollowUp);
+        $this->assertNotEmpty($updatedFollowUp);
+        $this->assertSame($followUpId, $updatedFollowUp['id']);
+        $this->assertSame($data['title'], $updatedFollowUp['title']);
+        $this->assertSame($data['description'], $updatedFollowUp['description']);
+        $this->assertSame($data['priority'], $updatedFollowUp['priority']);
+    }
+    public function test_Update_a_FollowUp_With_Invalid_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+
+        $data = [
+            'title' => 'Integration Test Followup',
+            'description' => 'Testing followup creation',
+            'priority' => 'high',
+            'due_at' => '2026-12-20 10:00:00',
+        ];
+        $followUpId = 9999;
+
+        $updatedFollowUp = $followUpModel->update($followUpId, $data);
+        $this->assertEmpty($updatedFollowUp);
+    }
 }
