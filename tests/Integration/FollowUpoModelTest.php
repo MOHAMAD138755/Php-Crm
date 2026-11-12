@@ -185,4 +185,22 @@ class FollowUpoModelTest extends DataBaseConnection
         $updatedFollowUp = $followUpModel->update($followUpId, $data);
         $this->assertEmpty($updatedFollowUp);
     }
+
+    public function test_FindById_Method()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 1;
+
+        $followUp = $followUpModel->findById($followUpId);
+        $this->assertNotEmpty($followUp);
+        $this->assertIsArray($followUp);
+    }
+    public function test_FindById_Method_With_Invalid_Id()
+    {
+        $followUpModel = new FollowUpModel($this->pdo);
+        $followUpId = 9999;
+
+        $followUp = $followUpModel->findById($followUpId);
+        $this->assertFalse($followUp);
+    }
 }
