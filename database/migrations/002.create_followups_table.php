@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-return static function (\PDO $db): void {
-    $db->exec(
-        "CREATE TABLE IF NOT EXISTS followups (
+return new class {
+    public function up(\PDO $db): void
+    {
+        $db->exec(
+            "CREATE TABLE IF NOT EXISTS followups (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             customer_id INT UNSIGNED NOT NULL,
             creator_id INT UNSIGNED NOT NULL,
@@ -28,6 +30,12 @@ return static function (\PDO $db): void {
     
             PRIMARY KEY (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
-    );
+        );
+    }
+
+    public function down(\PDO $db): void
+    {
+        $db->exec("DROP TABLE IF EXISTS followups");
+    }
 };
 

@@ -43,6 +43,11 @@ if ($command === 'migrate') {
 if ($command === 'rollback') {
     $migrationName = $db->query('SELECT migration FROM migrations ORDER BY id DESC LIMIT 1')->fetchColumn();
 
+    if ($migrationName === "001_create_users_and_customers.php"){
+        echo "users table cannot rollback\n";
+        exit();
+    }
+
     if (!$migrationName) {
         echo "Nothing to rollback.\n";
         exit();
