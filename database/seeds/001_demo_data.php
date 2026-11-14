@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return static function (\PDO $db): void {
+    $db->exec('DELETE FROM followups');
     $db->exec('DELETE FROM customers');
     $db->exec('DELETE FROM users');
 

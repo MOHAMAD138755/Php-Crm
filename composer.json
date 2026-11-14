@@ -26,6 +26,7 @@
     "test": "phpunit -c phpunit.xml",
     "migrate": "php bin/console.php migrate",
     "seed": "php bin/console.php seed",
+    "rollback": "php bin/console.php rollback",
     "setup": [
       "@migrate",
       "@seed"

@@ -8,6 +8,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $command = $argv[1] ?? 'help';
 $db = Database::connect();
 
+$migrationPath = dirname(__DIR__) . '/database/migrations';
+
 if ($command === 'migrate') {
     $db->exec(
         'CREATE TABLE IF NOT EXISTS migrations (' .
@@ -18,7 +20,9 @@ if ($command === 'migrate') {
     );
 
     $applied = $db->query('SELECT migration FROM migrations')->fetchAll(\PDO::FETCH_COLUMN);
-    foreach (glob(dirname(__DIR__) . '/database/migrations/*.php') ?: array() as $file) {
+    $files = glob($migrationPath . '/*.php');
+    sort($files);
+    foreach ($files as $file) {
         $name = basename($file);
         if (in_array($name, $applied, true)) {
             continue;
@@ -27,12 +31,36 @@ if ($command === 'migrate') {
         // MySQL implicitly commits DDL statements, so migrations are recorded
         // only after their callable completes successfully.
         $migration = require $file;
-        $migration($db);
+        $migration->up($db);
         $statement = $db->prepare('INSERT INTO migrations (migration) VALUES (:migration)');
         $statement->execute(array('migration' => $name));
         echo "Migrated: {$name}\n";
     }
+    echo "Migration SuccessFully\n";
     exit(0);
+}
+
+if ($command === 'rollback') {
+    $migrationName = $db->query('SELECT migration FROM migrations ORDER BY id DESC LIMIT 1')->fetchColumn();
+
+    if (!$migrationName) {
+        echo "Nothing to rollback.\n";
+        exit();
+    }
+
+    $file = $migrationPath . '/' . $migrationName;
+    if (!is_file($file)) {
+        echo "Not file.\n";
+        exit();
+    }
+
+    $migration = require $file;
+    $migration->down($db);
+    $statement = $db->prepare('DELETE FROM migrations WHERE migration = :migration');
+    $statement->execute(array('migration' => $migrationName));
+
+    echo "RollBacked: {$migrationName}\n";
+    exit();
 }
 
 if ($command === 'seed') {
@@ -44,5 +72,5 @@ if ($command === 'seed') {
     exit(0);
 }
 
-echo "Usage:\n  php bin/console.php migrate\n  php bin/console.php seed\n";
+echo "Usage:\n  php bin/console.php migrate\n php bin/console.php rollback\n  php bin/console.php seed\n";
 
